@@ -152,7 +152,7 @@ stdenv.mkDerivation rec {
   meta = with lib; {
     description = "Chromium with GOST encryption support";
     homepage = "https://cryptopro.ru/products/chromium-gost";
-    license = licenses.unfree;
+    license = licenses.mit;
     sourceProvenance = with sourceTypes; [ binaryNativeCode ];
     maintainers = with maintainers; [ ];
     platforms = [ "x86_64-linux" ];
