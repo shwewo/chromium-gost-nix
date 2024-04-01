@@ -115,31 +115,26 @@ stdenv.mkDerivation rec {
   ];
  
   unpackPhase = ''
-    mkdir -p $out/bin $out/share/ $out/opt $TMP
-    mkdir -p $out/share/icons/hicolor/128x128/apps/
-    mkdir -p $out/share/icons/hicolor/256x256/apps/
-    mkdir -p $out/share/icons/hicolor/32x32/apps/
-    mkdir -p $out/share/icons/hicolor/16x16/apps/
-    mkdir -p $out/share/icons/hicolor/24x24/apps/
-    mkdir -p $out/share/icons/hicolor/48x48/apps/
+    mkdir -p $out/bin $out/share/icons/hicolor $out/opt $TMP
+    cd $out/share/icons/hicolor
+    mkdir -p 128x128/apps/ 256x256/apps/ 32x32/apps/ 16x16/apps/ 24x24/apps/ 48x48/apps/
+    cd $TMP/
     ar vx $src
     tar --no-overwrite-dir -xvf data.tar.xz -C $TMP/
-    ls $TMP
   '';
 
   installPhase = ''
     cp -r $TMP/opt/ $out/
     cp -r $TMP/usr/share $out/
     substituteInPlace $out/share/applications/${pname}.desktop --replace /usr/ $out/
+    substituteInPlace $out/share/applications/${pname}.desktop --replace chromium-gost-stable chromium-gost
     substituteInPlace $out/share/gnome-control-center/default-apps/${pname}.xml --replace /opt/ $out/opt/
     ln -sf ${vivaldi-ffmpeg-codecs}/lib/libffmpeg.so $out/opt/${pname}/libffmpeg.so
     ln -sf $out/opt/${pname}/${pname} $out/bin/${pname}
-    ln -s $out/opt/${pname}/product_logo_128.png $out/share/icons/hicolor/128x128/apps/${pname}.png
-    ln -s $out/opt/${pname}/product_logo_256.png $out/share/icons/hicolor/256x256/apps/${pname}.png
-    ln -s $out/opt/${pname}/product_logo_32.png $out/share/icons/hicolor/32x32/apps/${pname}.png
-    ln -s $out/opt/${pname}/product_logo_16.png $out/share/icons/hicolor/16x16/apps/${pname}.png
-    ln -s $out/opt/${pname}/product_logo_24.png $out/share/icons/hicolor/24x24/apps/${pname}.png
-    ln -s $out/opt/${pname}/product_logo_48.png $out/share/icons/hicolor/48x48/apps/${pname}.png
+    sizes=(128 256 32 16 24 48)
+    for size in "''${sizes[@]}"; do
+      ln -s "$out/opt/${pname}/product_logo_$size.png" "$out/share/icons/hicolor/''${size}x''${size}/apps/${pname}.png"
+    done
   '';
 
   runtimeDependencies = map lib.getLib [
