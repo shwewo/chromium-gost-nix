@@ -155,6 +155,7 @@ stdenv.mkDerivation rec {
     license = licenses.mit;
     sourceProvenance = with sourceTypes; [ binaryNativeCode ];
     maintainers = with maintainers; [ ];
+    mainProgram = "chromium-gost";
     platforms = [ "x86_64-linux" ];
   };
 }
